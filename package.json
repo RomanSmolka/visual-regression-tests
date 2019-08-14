@@ -1,0 +1,23 @@
+{
+  "name": "visual-regression-tests",
+  "version": "1.0.0",
+  "description": "Visual regression tests tool based on Puppeteer & reg-cli",
+  "main": "index.js",
+  "author": "Roman Smolka",
+  "license": "MIT",
+  "scripts": {
+    "setup": "node index.js setup",
+    "capture-ref": "node index.js capture -f tests/reference.txt -o tests/reference",
+    "capture-new": "node index.js capture -f tests/current.txt -o tests/current",
+    "diff": "node index.js diff -r tests/reference -n tests/current -d tests/diff --report tests/report.html"
+  },
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "puppeteer": "^1.19.0",
+    "reg-cli": "^0.14.1",
+    "yargs": "^13.3.0"
+  },
+  "engines": {
+    "node": ">=10.12.0"
+  }
+}

@@ -1,0 +1,6 @@
+package-lock.json
+node_modules
+tests
+reg.json
+.DS_Store
+Thumbs.db
