@@ -19,5 +19,9 @@
   },
   "engines": {
     "node": ">=10.12.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RomanSmolka/visual-regression-tests.git"
   }
 }
