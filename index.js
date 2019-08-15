@@ -32,38 +32,42 @@ const devicesToEmulate = [
 
 let headless = true
 
-const capture = async (sourcefile, output) => {
+const capture = (sourcefile, output) => {
 	if (!fs.existsSync(output)) {
 		console.error(chalk.red('Error: The specified output directory does not exist'))
 		process.exit(1)
 	}
-	const lineReader = readline.createInterface({
-		input: fs.createReadStream(sourcefile).on('error', () => {
-			console.log(chalk.red('Error: The specified source file does not exist or is unreadable'))
-			process.exit(1)
-		})
+	const source = fs.createReadStream(sourcefile).on('error', () => {
+		console.log(chalk.red('Error: The specified source file does not exist or is unreadable'))
+		process.exit(1)
 	})
 
-	var timeOut = 0
-	lineReader.setMaxListeners(1000)
-	lineReader.on('line', function (url) {
+	let urls = []
+	readline.createInterface({input: source})
+	.setMaxListeners(1000)
+	.on('line', (url) => {
 		if (url != '') {
+			urls.push(url)
+		}
+	})
+	.on('close', () => {
+		let timeOut = 0
+		urls.forEach((url, i) => {
 			setTimeout(function () {
-				console.log('capturing')
-				console.log(' url:       ' + url)
-				console.log(' to folder: ' + output)
-				console.log('')
-				var urlParts = url.split('/')
+				const progressString = chalk.yellow(`${i+1} of ${urls.length}`)
+				console.log(`\ncapturing ${progressString} \n  url:       ${url} \n  to folder: ${output}`)
+				const urlParts = url.split('/')
 				screenName = urlParts[urlParts.length - 1]
 				if (screenName === '') {
 					screenName = urlParts[urlParts.length - 2]
 				}
 				captureScreen(screenName, url, devicesToEmulate, output )
-				 	.catch( (e) => { console.log(chalk.red(e)) } )
+					.catch( (e) => { console.log(chalk.red(e)) } )
 			}, timeOut)
 			timeOut = timeOut + 5000
-		}
+		})
 	})
+
 }
 
 const captureScreen = async (screenName, screenUrl, devicesToEmulate, destination) => {
