@@ -30,6 +30,8 @@ const devicesToEmulate = [
 	}
 ]
 
+let headless = true
+
 const capture = async (sourcefile, output) => {
 	if (!fs.existsSync(output)) {
 		console.error(chalk.red('Error: The specified output directory does not exist'))
@@ -66,7 +68,7 @@ const capture = async (sourcefile, output) => {
 
 const captureScreen = async (screenName, screenUrl, devicesToEmulate, destination) => {
 	const browser = await puppeteer.launch({ 
-		headless: false,
+		headless,
 		ignoreHTTPSErrors: true,
 		args: ['--start-maximized'] 
 	});
@@ -110,8 +112,14 @@ module.exports = yargs
 			alias: 'o',
 			type: 'string',
 			demandOption: true
+		},
+		display: {
+			description: 'Turns off headless mode',
+			alias: 'd',
+			type: 'boolean'
 		}
 	}, function (argv) {
+		if (argv.display) headless = false
 		capture(path.resolve(argv.file), path.resolve(argv.output))
 	})
 	.command('diff', 'Makes diff of screenshots in provided folders', {
