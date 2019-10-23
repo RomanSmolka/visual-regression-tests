@@ -8,6 +8,7 @@ const path = require('path')
 const readline = require('readline')
 const yargs = require('yargs')
 const chalk = require('chalk')
+const fsExtra = require('fs-extra')
 
 const regcli = './node_modules/reg-cli/dist/cli.js'
 
@@ -73,8 +74,7 @@ const capture = (sourcefile, output) => {
 const captureScreen = async (screenName, screenUrl, devicesToEmulate, destination) => {
 	const browser = await puppeteer.launch({ 
 		headless,
-		ignoreHTTPSErrors: true,
-		args: ['--start-maximized'] 
+		ignoreHTTPSErrors: true
 	});
 	const page = await browser.newPage()
 
@@ -151,7 +151,17 @@ module.exports = yargs
 			default: __dirname + '/report.html'
 		}
 	}, function (argv) {
-		childProcess.fork(regcli, [argv.new, argv.reference, argv.diff, '-R', argv.report, '-M', '0.2'])
+		childProcess.fork(regcli, [argv.new, argv.reference, argv.diff, '-R', argv.report, '-M', '0.3'])
+	})
+	.command('clean', 'Deletes all screenshots and the report', {}, function () {
+		Promise.all([
+			fsExtra.emptyDir(__dirname + '/tests/current'),
+			fsExtra.emptyDir(__dirname + '/tests/diff'),
+			fsExtra.emptyDir(__dirname + '/tests/reference'),
+			fsExtra.remove(__dirname + '/tests/report.html')
+		]).then(
+			() => console.log(chalk.green('Done.'))
+		)
 	})
 	.help()
 	.alias('help', 'h')

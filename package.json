@@ -9,10 +9,12 @@
     "setup": "node index.js setup",
     "capture-ref": "node index.js capture -f tests/reference.txt -o tests/reference",
     "capture-new": "node index.js capture -f tests/current.txt -o tests/current",
-    "diff": "node index.js diff -r tests/reference -n tests/current -d tests/diff --report tests/report.html"
+    "diff": "node index.js diff -r tests/reference -n tests/current -d tests/diff --report tests/report.html",
+    "clean": "node index.js clean"
   },
   "dependencies": {
     "chalk": "^2.4.2",
+    "fs-extra": "^8.1.0",
     "puppeteer": "^1.19.0",
     "reg-cli": "^0.14.1",
     "yargs": "^13.3.0"
